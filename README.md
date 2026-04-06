@@ -1,91 +1,83 @@
-## How to Run Labs 3 & 4
+## How to Run Lab 5: Obstacle Avoidance
 
-> Previous lab [Lab 2](https://www.google.com/search?q=https://github.com/Oleksandr-Na-no/Robotics_Lab_2/blob/main/README.md)
+> Previous labs:
+> [Lab 3](https://www.google.com/search?q=https://github.com/Oleksandr-Na-no/Robotics_Lab_3-4) (required)
+> [Lab 4](https://www.google.com/search?q=https://github.com/Oleksandr-Na-no/Robotics_Lab_3-4)
 
-### 1\. Prepare the Environment & Update Docker
+---
 
-Open the Docker container from the **[robotics\_lpnu](https://github.com/RybOlya/robotics_lpnu/tree/master)** repository.
+### 1. Prepare the Environment & Docker
 
-> **Note:** Navigate to the `robotics_lpnu/` folder (`cd robotics_lpnu/`) and run:
->
-> ```bash
-> ./scripts/cmd run
-> ```
+Open the Docker container from the **[robotics_lpnu](https://github.com/RybOlya/robotics_lpnu/tree/master)** repository.
 
------
+```bash
+cd robotics_lpnu/
+./scripts/cmd run
+```
 
-### 2\. Setup Files and Build the Workspace
+---
 
+### 2. Build Workspace (IMPORTANT)
 
-Inside the container, build the packages for both labs:
+> ⚠️ **Lab 5 depends on Lab 3**, so both packages must be built.
 
 ```bash
 source /opt/ros/jazzy/setup.bash
 cd /opt/ws
-colcon build --packages-select lab3 lab4
+colcon build --packages-select lab3 lab5
 source install/setup.bash
 ```
 
+---
 
------
+### 3. Setup Environment Before Run
 
-### 3\. Running Lab 3: Moving Mobile Robots
-
-You will test path nodes on either the Custom 4-wheel robot or TurtleBot3.
-
-**Terminal 1 (Launch Simulation & RViz2):**
-Choose ONE of the following to launch:
-
-```bash
-# Option A: Custom 4-wheel robot
-cd /opt/ws
-source install/setup.bash
-ros2 launch lab3 bringup.launch.py
-
-# Option B: TurtleBot3 in 8x8m room
-cd /opt/ws
-source install/setup.bash
-ros2 launch lab3 turtlebot3_room_bringup.launch.py
-```
-
-**Terminal 2 (Run Robot Controller):**
-Run the desired path script. (Make sure you have implemented `figure_8_path.py` as per the task).
+Before launching anything, make sure environment is sourced:
 
 ```bash
 cd /opt/ws
 source install/setup.bash
-
-# Run Square (default or with parameters):
-ros2 run lab3 square_path
-ros2 run lab3 square_path --ros-args -p side_length:=2.5 -p odom_topic:=/odom
-
-# OR Run Circle:
-ros2 run lab3 circle_path
-
-# OR Run Figure-8 (Student Task):
-ros2 run lab3 figure_8_path
-```
-
------
-
-### 4\. Running Lab 4: Dead Reckoning
-
-Ensure you have implemented the missing logic in `lab4/dead_reckoning.py` before running.
-
-**Terminal 1 (Launch Dead Reckoning & TurtleBot3):**
-
-```bash
-cd /opt/ws
 source /opt/ros/jazzy/setup.bash
-source install/setup.bash
-ros2 launch lab4 dead_reckoning_bringup.launch.py
 ```
 
-**Terminal 2 (Run Trajectory):**
+---
+
+### 4. Running Lab 5: Obstacle Avoidance
+
+This lab implements obstacle avoidance using **LIDAR (`/scan`)** and **odometry (`/odom`)**.
+
+**Launch simulation + node:**
 
 ```bash
-cd /opt/ws
-source /opt/ros/jazzy/setup.bash
-source install/setup.bash
-ros2 run lab3 circle_path
+ros2 launch lab5 obstacle_avoidance_bringup.launch.py
 ```
+
+---
+
+### 5. (Optional) Run with Custom Goal
+
+You can change the target point using parameters:
+
+```bash
+ros2 run lab5 obstacle_avoidance --ros-args -p goal_x:=2.0 -p goal_y:=-2.0
+```
+
+---
+
+### 6. World Setup (Required)
+
+Before running, you should **add obstacles** into the environment:
+
+Edit file:
+
+```bash
+lab3/turtlebot3/worlds/room.sdf
+```
+
+Add objects like:
+
+* walls
+* cylinders (pillars)
+* boxes
+
+This is required so the robot has obstacles to avoid.
